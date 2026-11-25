@@ -1,0 +1,224 @@
+/* ==========================================================
+   style.css – estilos próprios do site "Passeios em Jampa".
+   O Bootstrap cuida do layout básico (grid, botões, navbar);
+   este arquivo só acrescenta o visual personalizado e
+   sobrescreve o que o Bootstrap faz por padrão.
+   ========================================================== */
+
+
+/* ===== BASE ===== */
+
+/* Faz os links internos (#passeios, #contato...) rolarem
+   suavemente em vez de "pular" de uma vez para a seção */
+html{ scroll-behavior:smooth; }
+
+/* Fundo azul bem claro e texto azul-escuro em todo o site */
+body{ background:#F0F9FF; color:#0F172A; }
+
+/* Variável CSS com a cor de destaque (acento) da página.
+   O JavaScript troca esse valor conforme a categoria escolhida;
+   o padrão é um verde-azulado (teal) */
+:root{ --acento:#0F766E; }
+
+
+/* ===== MENU ===== */
+
+/* Fundo azul-marinho da barra de navegação */
+.navbar-jampa{ background:#0F2A3D; }
+
+/* Botão do idioma selecionado (PT/EN/ES): fica branco com texto escuro
+   para se destacar dos outros, que continuam com contorno */
+.btn-outline-light.active{ background:#fff; color:#0F2A3D; }
+
+
+/* ===== HERO COM FOTOS (a cor da categoria cobre as fotos) ===== */
+
+/* Seção principal do topo. "relative" permite posicionar o carrossel
+   de fotos por trás do texto; "overflow:hidden" corta o que passar da
+   área; o padding dá espaço interno (maior embaixo, para a legenda) */
+.hero{ position:relative; overflow:hidden; padding:72px 0 120px; background:#0F2A3D; }
+
+/* Camada do carrossel de fotos: ocupa toda a seção hero,
+   ficando como "papel de parede" atrás do texto */
+.hero-fundo{ position:absolute; inset:0; }
+
+/* Faz o carrossel e cada slide terem 100% da altura do hero,
+   senão as fotos não preencheriam a seção inteira */
+.hero-fundo .carousel-inner, .hero-fundo .carousel-item{ height:100%; }
+
+/* Foto do slide: cobre toda a área sem distorcer (recorta se precisar) */
+.slide-img{ width:100%; height:100%; object-fit:cover; }
+
+/* Película colorida por cima das fotos. É um pseudo-elemento (::after)
+   que cobre o carrossel, usa a cor --acento (muda com a categoria)
+   e deixa 68% de opacidade para as fotos aparecerem por baixo.
+   pointer-events:none faz os cliques atravessarem a película.
+   A transição suaviza a troca de cor ao mudar de categoria */
+.hero-fundo .carousel-inner::after{
+content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+background:var(--acento); opacity:.68; transition:background-color .4s;
+}
+
+/* Mantém indicadores (bolinhas) e setas do carrossel acima da película,
+   para continuarem clicáveis */
+.hero-fundo .carousel-indicators, .hero-fundo .carousel-control-prev, .hero-fundo .carousel-control-next{ z-index:4; }
+
+/* Texto do hero (título, subtítulo, busca): fica acima da película (z-index 3).
+   pointer-events:none deixa os cliques passarem para o carrossel por baixo
+   (assim as setas funcionam mesmo com o texto na frente) */
+.hero-conteudo{ position:relative; z-index:3; pointer-events:none; }
+
+/* Mas o campo de busca precisa receber cliques e digitação,
+   então reativamos os eventos só nele */
+.hero-conteudo .busca{ pointer-events:auto; }
+
+/* Sombra no texto para continuar legível sobre qualquer foto */
+.hero-conteudo h1, .hero-conteudo p{ text-shadow:0 2px 10px rgba(0,0,0,.5); }
+
+/* Legenda do carrossel (botão com o nome do passeio da foto atual).
+   Fica centralizada na parte de baixo do hero: left:50% + translateX(-50%)
+   é o truque para centralizar; white-space:nowrap evita quebrar o texto;
+   formato de pílula (border-radius alto) com fundo branco translúcido */
+.legenda{
+position:absolute; z-index:4; left:50%; bottom:52px; transform:translateX(-50%);
+padding:6px 16px; border:0; border-radius:50px; white-space:nowrap;
+background:rgba(255,255,255,.92); color:#0F172A; font-weight:600; font-size:.9rem;
+cursor:pointer; transition:background .2s;
+}
+
+/* Ao passar o mouse, a legenda fica totalmente branca */
+.legenda:hover{ background:#fff; }
+
+/* Campo de busca: largura máxima de 560px, bordas arredondadas (pílula)
+   e um recuo à esquerda para o texto não encostar na borda */
+.busca{ max-width:560px; border-radius:50px; padding-left:24px; }
+
+
+/* ===== FILTROS (cada categoria tem sua cor) ===== */
+
+/* Botões de categoria ("chips"). A cor vem da variável --c, definida
+   pelo JavaScript em cada botão. Estado normal: fundo branco, texto e
+   borda na cor da categoria. "transition" suaviza as mudanças */
+.chip{
+padding:8px 18px; font-weight:600; border-radius:50px;
+color:var(--c); background:#fff; border:2px solid var(--c);
+cursor:pointer; transition:background .2s, color .2s, transform .15s;
+}
+
+/* Mouse em cima: sobe 2px e se preenche com a cor da categoria */
+.chip:hover{ transform:translateY(-2px); background:var(--c); color:#fff; opacity:.85; }
+
+/* Categoria selecionada: fica preenchida e com opacidade total */
+.chip.ativo{ background:var(--c); color:#fff; opacity:1; }
+
+
+/* ===== CARDS ===== */
+
+/* Card de cada passeio: borda superior grossa na cor da categoria
+   (--c), sem as outras bordas; "overflow:hidden" corta a foto nos
+   cantos arredondados; a transição anima o "levantar" do card */
+.passeio{
+overflow:hidden; border:0; border-top:6px solid var(--c);
+transition:transform .2s, box-shadow .2s;
+}
+
+/* Mouse em cima: o card sobe 6px e ganha uma sombra maior.
+   "!important" é necessário para vencer a sombra (shadow-sm)
+   que o Bootstrap aplica pela classe no HTML */
+.passeio:hover{ transform:translateY(-6px); box-shadow:0 .9rem 1.6rem rgba(15,23,42,.18) !important; }
+
+/* Selo com o nome da categoria: fundo na cor da categoria */
+.selo{ background:var(--c); color:#fff; font-weight:600; }
+
+/* Linhas de informação (duração, saída, preço): menores e em cinza */
+.info{ font-size:.9rem; color:#475569; }
+
+/* Os rótulos em negrito dentro das informações ficam mais escuros */
+.info strong{ color:#0F172A; }
+
+
+/* ===== FOTOS DOS CARDS ===== */
+
+/* Foto e o "quadrado de emoji" (usado quando não há foto) têm
+   o mesmo tamanho: largura total do card e 190px de altura */
+.foto, .sem-foto{ width:100%; height:190px; }
+
+/* A foto preenche o espaço sem distorcer (recorta as sobras) */
+.foto{ object-fit:cover; }
+
+/* Quando o passeio não tem foto: mostra um emoji grande centralizado
+   (display:grid + place-items:center) sobre a cor da categoria */
+.sem-foto{ display:grid; place-items:center; font-size:3.5rem; background:var(--c); }
+
+
+/* ===== FAVORITO ===== */
+
+/* Botão de coração: sem borda nem fundo, só o ícone, em cinza.
+   A transição anima o aumento (hover) e a mudança de cor */
+.fav{ border:0; background:none; font-size:1.7rem; line-height:1; color:#94A3B8; cursor:pointer; transition:transform .2s, color .2s; }
+
+/* Mouse em cima: o coração cresce 20% e fica vermelho */
+.fav:hover{ transform:scale(1.2); color:#E11D48; }
+
+/* Passeio já favoritado (classe "on" adicionada pelo JS): coração vermelho fixo */
+.fav.on{ color:#E11D48; }
+
+
+/* ===== BOTÃO DO CARD ===== */
+
+/* Botão "Acessar Site Oficial": fundo na cor da categoria, texto branco */
+.btn-visitar{ background:var(--c); color:#fff; font-weight:600; border:0; }
+
+/* Mouse em cima: mantém o texto branco (o Bootstrap mudaria a cor)
+   e escurece o botão em 12% com brightness */
+.btn-visitar:hover{ color:#fff; filter:brightness(.88); }
+
+
+/* ===== RODAPÉ ===== */
+
+/* Fundo azul-marinho, igual ao do menu */
+.rodape{ background:#0F2A3D; }
+
+/* Títulos do rodapé: pequenos, em maiúsculas, com letras espaçadas
+   e um pouco transparentes para ficarem discretos */
+.rodape h2{ font-size:.9rem; letter-spacing:.12em; text-transform:uppercase; opacity:.75; margin-bottom:10px; }
+
+
+/* ===== ZOOM NA FOTO DO CARD ===== */
+
+/* Caixa que envolve a foto: corta o que ultrapassar,
+   para o zoom não "vazar" para fora do card */
+.foto-box{ overflow:hidden; }
+
+/* Define a animação suave (0,5s) do zoom na foto */
+.foto{ transition:transform .5s; }
+
+/* Ao passar o mouse no card, a foto aumenta 8% */
+.passeio:hover .foto{ transform:scale(1.08); }
+
+
+/* ===== ENTRADA SUAVE DOS CARDS E DESTAQUE AO VIR DO CARROSSEL ===== */
+
+/* Animação "entrar": o card começa invisível e 16px mais abaixo
+   e termina visível, na posição normal (efeito de subir aparecendo) */
+@keyframes entrar{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+
+/* Aplica a animação em cada coluna da grade quando ela tem a classe
+   "anima" (o JS adiciona ao trocar filtro/busca). "both" mantém o
+   estado inicial e o final da animação */
+#grade.anima .col{ animation:entrar .45s ease both; }
+
+/* Animação "piscar": um brilho (sombra) na cor da categoria aparece
+   e some, chamando atenção para o card */
+@keyframes piscar{ 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 0 6px var(--c); } }
+
+/* Usada quando se clica na legenda do carrossel: o JS rola até o card
+   e adiciona "piscar". A animação roda 2 vezes (0,8s cada) */
+.passeio.piscar{ animation:piscar .8s ease 2; }
+
+/* Acessibilidade: para quem configurou o sistema para reduzir
+   movimento, desliga todas as animações e o zoom das fotos */
+@media (prefers-reduced-motion:reduce){
+#grade.anima .col, .passeio.piscar{ animation:none; }
+.foto{ transition:none; }
+}

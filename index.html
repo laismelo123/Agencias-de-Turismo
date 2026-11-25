@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<!-- Define que o documento é HTML5 -->
+<html lang="pt-BR">
+<!-- lang="pt-BR": informa o idioma da página (ajuda navegadores e leitores de tela) -->
+<head>
+    <!-- Codificação de caracteres: permite acentos e símbolos (ç, ã, é, 🌴) -->
+    <meta charset="UTF-8">
+
+    <!-- Deixa o site responsivo: a largura da página acompanha a largura da tela do celular -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título que aparece na aba do navegador -->
+    <title>Passeios em Jampa</title>
+
+    <!-- Bootstrap 5 (CSS): traz os estilos prontos (grid, botões, navbar, cards...) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS do projeto: personalizações (cores, hero etc.). Vem DEPOIS do Bootstrap para poder sobrescrevê-lo -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===================== MENU SUPERIOR (NAVBAR) =====================
+     sticky-top: o menu fica fixo no topo ao rolar a página
+     navbar-jampa: classe do projeto (cor personalizada no style.css)
+     data-bs-theme="dark": faz textos e ícones do Bootstrap ficarem claros em fundo escuro -->
+<nav class="navbar sticky-top navbar-jampa" data-bs-theme="dark">
+    <!-- container: centraliza e limita a largura do conteúdo
+         d-flex: organiza os itens lado a lado (Flexbox)
+         flex-wrap: se faltar espaço (celular), os itens quebram para a linha de baixo
+         gap-2: espaço entre os itens
+         justify-content-between: um item na esquerda e outro na direita -->
+    <div class="container d-flex flex-wrap gap-2 justify-content-between">
+
+        <!-- Nome do site (clicar leva ao topo, onde está id="topo") -->
+        <a class="navbar-brand fw-bold" href="#topo">🌴 Passeios em Jampa</a>
+
+        <div class="d-flex gap-2 align-items-center">
+            <!-- Botões de idioma agrupados.
+                 data-lang="pt/en/es": o JavaScript lê esse atributo para saber qual idioma aplicar -->
+            <div class="btn-group btn-group-sm" role="group" aria-label="Idioma">
+                <button class="btn btn-outline-light" data-lang="pt">PT</button>
+                <button class="btn btn-outline-light" data-lang="en">EN</button>
+                <button class="btn btn-outline-light" data-lang="es">ES</button>
+            </div>
+
+            <!-- Botão do roteiro (lista de passeios favoritados).
+                 data-bs-toggle="offcanvas" + data-bs-target="#painel": ao clicar, abre o painel lateral de id="painel"
+                 data-i="roteiro": o JavaScript troca esse texto conforme o idioma escolhido
+                 id="qtd": o JavaScript atualiza o número de passeios no roteiro -->
+            <button class="btn btn-warning btn-sm fw-semibold" data-bs-toggle="offcanvas" data-bs-target="#painel">
+                ♥ <span data-i="roteiro"></span> <span class="badge text-bg-dark" id="qtd">0</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===================== TOPO / HERO =====================
+     hero: classe do projeto (altura e posição no style.css)
+     text-white text-center: texto branco e centralizado
+     id="topo": destino do link do logo no menu -->
+<header class="hero text-white text-center" id="topo">
+
+    <!-- CARROSSEL de imagens de fundo
+         slide: animação de passagem
+         carousel-fade: troca de imagem com efeito de esmaecer
+         Os slides (imagens) e os indicadores são criados pelo JavaScript dentro de #slides e #indicadores -->
+    <div id="carrossel" class="carousel slide carousel-fade hero-fundo">
+        <!-- Bolinhas indicadoras (preenchidas pelo JS) -->
+        <div class="carousel-indicators" id="indicadores"></div>
+
+        <!-- Área onde o JS insere as imagens (.carousel-item) -->
+        <div class="carousel-inner" id="slides"></div>
+
+        <!-- Seta "anterior": data-bs-slide="prev" volta uma imagem -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#carrossel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <!-- visually-hidden: texto só para leitores de tela (acessibilidade) -->
+            <span class="visually-hidden" data-i="ant"></span>
+        </button>
+
+        <!-- Seta "próximo": data-bs-slide="next" avança uma imagem -->
+        <button class="carousel-control-next" type="button" data-bs-target="#carrossel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden" data-i="prox"></span>
+        </button>
+    </div>
+
+    <!-- Conteúdo que fica POR CIMA do carrossel (título, subtítulo e busca) -->
+    <div class="container hero-conteudo">
+        <!-- display-5: título grande; fw-bold: negrito.
+             data-i="heroTitle": texto preenchido pelo JS (muda conforme o idioma) -->
+        <h1 class="display-5 fw-bold" data-i="heroTitle"></h1>
+
+        <!-- lead: parágrafo destacado; mb-4: margem inferior -->
+        <p class="lead mb-4" data-i="heroSub"></p>
+
+        <!-- Campo de busca de passeios.
+             form-control-lg: campo grande; mx-auto: centraliza
+             data-ph="search": o JS troca o placeholder (texto de dica) conforme o idioma
+             aria-label: descrição para leitores de tela, já que não há <label> visível -->
+        <input type="search" id="busca" class="form-control form-control-lg mx-auto busca" data-ph="search" aria-label="Buscar">
+    </div>
+
+    <!-- Legenda da foto do carrossel (o JS escreve o nome do local e pode usá-la como botão/link) -->
+    <button type="button" id="legenda" class="legenda"></button>
+</header>
+
+<!-- ===================== CONTEÚDO PRINCIPAL =====================
+     py-4: espaçamento vertical interno -->
+<main class="container py-4">
+
+    <!-- Botões de filtro por categoria (criados pelo JS).
+         flex-wrap: quebram de linha no celular; justify-content-center: centralizados -->
+    <div id="filtros" class="d-flex flex-wrap gap-2 justify-content-center mb-2"></div>
+
+    <!-- Nota explicativa (texto-secundário, pequeno), traduzida pelo JS -->
+    <p class="text-center text-secondary small mb-4" data-i="nota"></p>
+
+    <!-- GRADE DE CARDS DOS PASSEIOS (os cards são criados pelo JS).
+         row-cols-1: 1 coluna no celular
+         row-cols-md-2: 2 colunas em telas médias
+         row-cols-lg-3: 3 colunas em telas grandes
+         g-4: espaçamento entre os cards -->
+    <div id="grade" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+
+    <!-- Mensagem "nenhum passeio encontrado".
+         d-none: começa escondida; o JS remove essa classe quando a busca/filtro não retorna nada -->
+    <p id="vazio" class="text-center text-secondary py-5 d-none" data-i="nada"></p>
+</main>
+
+<!-- ===================== SEÇÃO PARCEIRO (formulário) =====================
+     bg-white: fundo branco; border-top: linha fina no topo; py-5: espaçamento vertical -->
+<section class="py-5 bg-white border-top" id="parceiro">
+    <div class="container">
+        <!-- Centraliza a coluna do formulário -->
+        <div class="row justify-content-center">
+            <!-- col-lg-6: ocupa metade da largura em telas grandes (e 100% no celular) -->
+            <div class="col-lg-6">
+                <h2 class="fw-bold text-center" data-i="pTitle"></h2>
+                <p class="text-center text-secondary mb-4" data-i="pSub"></p>
+
+                <!-- FORMULÁRIO
+                     novalidate: desliga a validação padrão do navegador, pois o JS faz a validação
+                     p-4: espaçamento interno; border rounded-3: borda arredondada; shadow-sm: sombra leve -->
+                <form id="form-parceiro" class="p-4 border rounded-3 shadow-sm" novalidate>
+
+                    <!-- Cada campo: label + input + mensagem de erro.
+                         for="ag" liga o label ao campo de id="ag" (clicar no texto seleciona o campo)
+                         required: campo obrigatório
+                         invalid-feedback: mensagem vermelha que só aparece quando o campo é inválido -->
+                    <div class="mb-3"><label class="form-label" for="ag" data-i="fAg"></label>
+                        <input class="form-control" id="ag" required><div class="invalid-feedback" data-i="req"></div></div>
+
+                    <div class="mb-3"><label class="form-label" for="site" data-i="fSite"></label>
+                        <input class="form-control" id="site" required><div class="invalid-feedback" data-i="req"></div></div>
+
+                    <!-- type="email": valida se o texto tem formato de e-mail -->
+                    <div class="mb-3"><label class="form-label" for="mail" data-i="fMail"></label>
+                        <input type="email" class="form-control" id="mail" required><div class="invalid-feedback" data-i="req"></div></div>
+
+                    <!-- textarea: campo de várias linhas (rows="3" = altura inicial de 3 linhas) -->
+                    <div class="mb-3"><label class="form-label" for="msg" data-i="fMsg"></label>
+                        <textarea class="form-control" id="msg" rows="3" required></textarea><div class="invalid-feedback" data-i="req"></div></div>
+
+                    <!-- Botão de enviar: w-100 ocupa toda a largura; btn-lg é grande -->
+                    <button class="btn btn-primary btn-lg w-100" type="submit" data-i="enviar"></button>
+
+                    <!-- Área onde o JS mostra a mensagem de sucesso ou erro após o envio -->
+                    <div id="alerta" class="mt-3"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== RODAPÉ =====================
+     rodape: classe do projeto (cor de fundo no style.css)
+     text-white text-center: texto branco e centralizado; py-4: espaçamento vertical -->
+<footer class="rodape text-white text-center py-4">
+    <h2 data-i="colab"></h2>
+
+    <!-- list-unstyled: remove os marcadores da lista -->
+    <ul class="list-unstyled mb-3">
+        <li>José Davi Barbosa de Araújo</li>
+        <li>Laís Honorio de Melo</li>
+        <li>Luiz Feliipe da Silva Cabral</li>
+        <li>Ronald Jones de Melo Gomes Farias</li>
+    </ul>
+
+    <!-- &copy; é o símbolo ©. O ano (id="ano") é preenchido automaticamente pelo JS -->
+    <p class="mb-0">&copy; <span id="ano">2026</span> Passeios em Jampa · <span data-i="rodape"></span></p>
+</footer>
+
+<!-- ===================== PAINEL LATERAL: MEU ROTEIRO =====================
+     offcanvas: painel que desliza para dentro da tela
+     offcanvas-end: abre pelo lado direito
+     tabindex="-1": permite que o painel receba foco (necessário para acessibilidade)
+     id="painel": é o alvo do botão "♥ Roteiro" lá na navbar -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="painel">
+    <div class="offcanvas-header">
+        <h2 class="offcanvas-title h5" data-i="roteiro"></h2>
+        <!-- data-bs-dismiss="offcanvas": o Bootstrap fecha o painel ao clicar -->
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Lista onde o JS insere os passeios adicionados ao roteiro -->
+        <ul class="list-group" id="lista-roteiro"></ul>
+    </div>
+</div>
+
+<!-- ===================== SCRIPTS =====================
+     Bootstrap JS (bundle): faz funcionar o carrossel, o painel lateral e outros componentes -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- JavaScript do projeto: monta os cards, filtros, idiomas, busca, roteiro e formulário.
+     Fica no final do body para rodar só depois que todo o HTML foi carregado -->
+<script src="js/script.js"></script>
+</body>
+</html>
