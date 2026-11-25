@@ -1,6 +1,6 @@
-Passeios em Jampa
+     Passeios em Jampa
 
-Site de turismo que reúne os principais passeios de João Pessoa (PB): piscinas naturais, praias, passeios náuticos e história da capital paraibana. Cada passeio mostra as agências que o oferecem, para o usuário comparar e acessar o site oficial de cada uma.
+    Site de turismo que reúne os principais passeios de João Pessoa (PB): piscinas naturais, praias, passeios náuticos e história da capital paraibana. Cada        passeio mostra as agências que o oferecem, para o usuário comparar e acessar o site oficial de cada uma.
 
 Projeto desenvolvido em grupo.
 
